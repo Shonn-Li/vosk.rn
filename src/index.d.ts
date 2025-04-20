@@ -1,5 +1,13 @@
 import type { TurboModule } from 'react-native';
 
+// Word with timestamp information
+export type WordWithTimestamp = {
+  conf: number;
+  end: number;
+  start: number;
+  word: string;
+};
+
 type VoskOptions = {
   /**
    * Set of phrases the recognizer will seek on which is the closest one from
@@ -10,6 +18,10 @@ type VoskOptions = {
    * Timeout in milliseconds to listen.
    */
   timeout?: number;
+  /**
+   * Path to save audio recording to.
+   */
+  audioFilePath?: string;
 };
 
 interface VoskInterface extends TurboModule {
@@ -18,9 +30,11 @@ interface VoskInterface extends TurboModule {
 
   start: (options?: VoskOptions) => Promise<void>;
   stop: () => void;
+  pause: () => void;
+  resume: () => Promise<boolean>;
 
   addListener: (eventType: string) => void;
   removeListeners: (count: number) => void;
 }
 
-export type { VoskOptions, VoskInterface };
+export type { VoskInterface, VoskOptions };

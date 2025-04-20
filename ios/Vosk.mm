@@ -15,6 +15,11 @@ RCT_EXTERN_METHOD(start:(NSDictionary *)options
 
 RCT_EXTERN_METHOD(stop)
 
+RCT_EXTERN_METHOD(pause)
+
+RCT_EXTERN_METHOD(resume:(RCTPromiseResolveBlock)resolve
+                withRejecter:(RCTPromiseRejectBlock)reject)
+
 + (BOOL)requiresMainQueueSetup
 {
   return NO;

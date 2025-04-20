@@ -5,7 +5,7 @@ import {
   PermissionsAndroid,
   Platform,
 } from 'react-native';
-import type { VoskInterface, VoskOptions } from './index.d';
+import type { VoskInterface, VoskOptions, WordWithTimestamp } from './index.d';
 
 const LINKING_ERROR =
   `The package 'react-native-vosk' doesn't seem to be linked. Make sure: \n\n` +
@@ -52,6 +52,7 @@ export default class Vosk {
    *   vosk.start({
    *      grammar: ['cool', 'application', '[unk]'],
    *      timeout: 5000,
+   *      audioFilePath: '/path/to/save/recording.wav',
    *   }).catch(e => console.log(e));
    */
   start = async (options?: VoskOptions) => {
@@ -64,19 +65,32 @@ export default class Vosk {
   stop = () => VoskModule.stop();
 
   /**
+   * Pauses the recognition process without releasing resources.
+   */
+  pause = () => VoskModule.pause();
+
+  /**
+   * Resumes the recognition process after pausing.
+   * @returns Promise that resolves to true if resumed successfully
+   */
+  resume = () => VoskModule.resume();
+
+  /**
    * Unloads the model, also stops the recognizer.
    */
   unload = () => VoskModule.unload();
 
   // Event listeners builders
 
-  onResult = (cb: (e: string) => void): EventSubscription => {
+  onResult = (cb: (result: WordWithTimestamp[]) => void): EventSubscription => {
     return eventEmitter.addListener('onResult', cb);
   };
   onPartialResult = (cb: (e: string) => void): EventSubscription => {
     return eventEmitter.addListener('onPartialResult', cb);
   };
-  onFinalResult = (cb: (e: string) => void): EventSubscription => {
+  onFinalResult = (
+    cb: (result: WordWithTimestamp[]) => void
+  ): EventSubscription => {
     return eventEmitter.addListener('onFinalResult', cb);
   };
   onError = (cb: (e: any) => void): EventSubscription => {
@@ -84,6 +98,9 @@ export default class Vosk {
   };
   onTimeout = (cb: () => void): EventSubscription => {
     return eventEmitter.addListener('onTimeout', cb);
+  };
+  onVolumeChanged = (cb: (volume: number) => void): EventSubscription => {
+    return eventEmitter.addListener('onVolumeChanged', cb);
   };
 
   // Private functions
